@@ -1,12 +1,17 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux/es/exports';
+import { addContact } from 'redux/contactsSlice';
 import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
 import { Box } from 'components/Box';
 import { Input, Title } from './ContactForm.styled';
 import Button from 'components/Button';
 
-const ContactForm = ({ onSubmit, checkDuplicates }) => {
+const ContactForm = ({ checkDuplicates }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const dispatch = useDispatch();
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -32,7 +37,9 @@ const ContactForm = ({ onSubmit, checkDuplicates }) => {
       return;
     }
 
-    onSubmit({ contact: { name, number } });
+    const contact = { id: nanoid(), name, number };
+
+    dispatch(addContact(contact));
     reset();
   };
 
