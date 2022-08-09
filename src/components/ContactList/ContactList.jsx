@@ -5,17 +5,15 @@ import ContactItem from 'components/ContactItem';
 const ContactList = ({ values, handleDelete }) => {
   return (
     <Box display="flex" flexDirection="column" p="0px" as="ul">
-      {values.map(({ id, name, number }) => {
-        return (
-          <ContactItem
-            key={id}
-            id={id}
-            name={name}
-            number={number}
-            deleteContact={() => handleDelete(id)}
-          />
-        );
-      })}
+      {values.map(({ id, name, number }) => (
+        <ContactItem
+          key={id}
+          id={id}
+          name={name}
+          number={number}
+          deleteContact={handleDelete}
+        />
+      ))}
     </Box>
   );
 };

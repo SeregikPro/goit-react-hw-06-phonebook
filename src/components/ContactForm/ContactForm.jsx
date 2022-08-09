@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux/es/exports';
-import { addContact } from 'redux/contactsSlice';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux/es/exports';
+import { addContact, getContacts } from 'redux/contactsSlice';
 import { nanoid } from 'nanoid';
 import { Box } from 'components/Box';
 import { Input, Title } from './ContactForm.styled';
 import Button from 'components/Button';
 
-const ContactForm = ({ checkDuplicates }) => {
+const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -27,6 +26,15 @@ const ContactForm = ({ checkDuplicates }) => {
 
       default:
         return;
+    }
+  };
+
+  const allContactNames = useSelector(getContacts).map(contact => contact.name);
+
+  const checkDuplicates = name => {
+    if (allContactNames.includes(name)) {
+      alert(`${name} is already in contacts.`);
+      return true;
     }
   };
 
@@ -87,8 +95,3 @@ const ContactForm = ({ checkDuplicates }) => {
 };
 
 export default ContactForm;
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-  checkDuplicates: PropTypes.func.isRequired,
-};

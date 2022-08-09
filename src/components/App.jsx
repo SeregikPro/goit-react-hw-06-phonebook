@@ -1,52 +1,31 @@
 import React from 'react';
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
 import { Box } from './Box';
 import ContactList from './ContactList';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
-import useLocalStorage from 'hooks/UseLocalStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  removeContact,
+  setFilter,
+  getContacts,
+  getFilter,
+} from 'redux/contactsSlice';
 
 const App = () => {
-  const [contacts, setContacts] = useLocalStorage('contacts', [
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ]);
+  const dispatch = useDispatch();
 
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
 
-  const handleContactSubmit = ({ contact: { name, number } }) => {
-    const newContact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-    setContacts(contacts => [...contacts, newContact]);
+  const handleFilter = e => {
+    dispatch(setFilter(e.target.value.toLowerCase()));
   };
 
-  const filteredContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(({ name }) =>
-      name.toLowerCase().includes(normalizedFilter)
-    );
-  };
-
-  const handleFilter = e => setFilter(e.currentTarget.value.toLowerCase());
-
-  const checkDuplicates = name => {
-    const allContactNames = contacts.map(contact => contact.name);
-
-    if (allContactNames.includes(name)) {
-      alert(`${name} is already in contacts.`);
-      return true;
-    }
-  };
+  const filteredContacts = () =>
+    contacts.filter(e => e.name.toLowerCase().includes(filter.toLowerCase()));
 
   const deleteContact = id => {
-    setContacts(contacts => contacts.filter(contact => contact.id !== id));
+    dispatch(removeContact({ id }));
   };
 
   return (
@@ -60,10 +39,7 @@ const App = () => {
         borderRadius="normal"
         p={4}
       >
-        <ContactForm
-          onSubmit={handleContactSubmit}
-          checkDuplicates={checkDuplicates}
-        />
+        <ContactForm />
       </Box>
       <Box width="300px">
         <h2>Contacts</h2>
